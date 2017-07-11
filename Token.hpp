@@ -22,8 +22,8 @@ class Token
   private:
     const TokenType type;
     const std::string tokenString;
-    const int number;
-    const int line;
+    const int number;//typeがTOK_DIGITの時に数値が有効になる
+    const int line;//行数
 
   public:
     Token(const std::string &string, TokenType _type, int _line)
