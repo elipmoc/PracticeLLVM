@@ -1,9 +1,11 @@
 #include <iostream>
 #include "APP.hpp"
+#include "Token.hpp"
 int main(){
-    auto a=new int;
-    std::cout<<a<<std::endl;
-    Safe_Delete(a);
-    std::cout<<a<<std::endl;
+    Token token("114514",TokenType::TOK_DIGIT,15);
+    std::cout<<static_cast<int>(token.GetTokenType())<<std::endl;
+    std::cout<<token.GetTokenString()<<std::endl;
+    std::cout<<token.GetNumberValue()<<std::endl;
+    std::cout<<token.GetLine()<<std::endl;
     return 0;
 }
