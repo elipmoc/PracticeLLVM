@@ -1,6 +1,7 @@
 #include <iostream>
 #include "APP.hpp"
 #include "Token.hpp"
+#include "TokenStream.hpp"
 using practicellvm::Token;
 using practicellvm::TokenType;
 int main(){
