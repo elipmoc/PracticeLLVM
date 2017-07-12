@@ -24,19 +24,19 @@ class TokenStream{
     Token GetToken();
 
     //トークンの種類を取得
-    const TokenType GetCurType(){
+    const TokenType GetCurType()const{
         return tokens[curIndex]->GetTokenType();
     }
     //トークンの文字表現を取得
-    const std::string GetCurString(){
+    const std::string GetCurString()const{
         return tokens[curIndex]->GetTokenString();
     }
     //トークンの数値を取得
-    const int GetCurNumVal(){
+    const int GetCurNumVal()const{
         return tokens[curIndex]->GetNumberValue();
     }
     //現在のインデックスを取得
-    const int GetCurIndex(){return curIndex;}
+    const int GetCurIndex()const{return curIndex;}
     //インデックス指定した値に設定
     const bool ApplyTokenIndex(const int index){
         curIndex=index;
