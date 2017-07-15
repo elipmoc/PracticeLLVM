@@ -15,13 +15,13 @@ class TokenStream{
     TokenStream():curIndex(0){}
     ~TokenStream();
 
-    const bool UngetToken(const int times=1);
+    const bool UnGetToken(const int times=1);
     const bool GetNextToken();
     const bool PushToken(Token* token){
         tokens.push_back(token);
         return true;
     }
-    Token GetToken();
+    const Token GetToken()const;
 
     //トークンの種類を取得
     const TokenType GetCurType()const{
