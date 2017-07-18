@@ -1,6 +1,7 @@
 #include "APP.hpp"
 #include "TokenStream.hpp"
 #include <iostream>
+#include <iomanip>
 namespace practicellvm{
 
     //デストラクタ
@@ -33,10 +34,38 @@ namespace practicellvm{
         return true;
     }
 
+    const std::string TokenTypeToString(TokenType tokenType){
+        std::string str="";
+        switch(tokenType){
+            case TokenType::TOK_IDENTIFIER:
+                str="識別子      ";
+                break;
+            case TokenType::TOK_DIGIT:
+                str="数値リテラル";
+                break;
+            case TokenType::TOK_SYMBOL:
+                str="記号        ";
+                break;
+            case TokenType::TOK_INT:
+                str="int         ";
+                break;
+            case TokenType::TOK_RETURN:
+                str="return      ";
+                break;
+            case TokenType::TOK_EOF:
+                str="eof         ";
+                break;
+            default:
+                str="ErrorType ";
+                break;
+        }
+        return str;
+    }
+
     //格納されたトークン一覧を表示する
     const bool TokenStream::PrintTokens(){
         for(auto&& item:tokens){
-            std::cout<<static_cast<int>(item->GetTokenType())<<":";
+            std::cout<<TokenTypeToString(item->GetTokenType())<<":";
             if(item->GetTokenType()!=TokenType::TOK_EOF)
                 std::cout<<item->GetTokenString();
             std::cout<<std::endl;

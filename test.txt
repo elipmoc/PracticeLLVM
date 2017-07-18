@@ -1,0 +1,8 @@
+int main(){
+	int a;
+	int b;
+	/*int c;*/int g;
+	int f=4/3;
+	int hoge=a*b/3+f;
+	return;
+}
