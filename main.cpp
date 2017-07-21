@@ -3,6 +3,7 @@
 #include "Token.hpp"
 #include "TokenStream.hpp"
 #include "Lexer.hpp"
+#include "AstBase.hpp"
 using practicellvm::Token;
 using practicellvm::TokenType;
 using practicellvm::TokenStream;
