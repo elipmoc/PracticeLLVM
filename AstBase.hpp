@@ -46,13 +46,13 @@ class VariableDeclAST:public BaseAST{
     ~VariableDeclAST(){}
 
     //変数名を取得する
-    std::string GetName(){return name;}
+    std::string GetName()const{return name;}
 
     //変数の宣言種別を設定する
     bool SetDeclType(DeclType _type){type=_type;return true;}
 
     //変数の宣言種別を取得する
-    DeclType GetType(){return type;}
+    DeclType GetType()const{return type;}
 
 };
 
@@ -99,7 +99,7 @@ class CallExprAST:public BaseAST{
     std::string GetCallee()const{return callee;}
 
     //i番目の引数を取得する
-    BaseAST* GetArgs(int i){
+    BaseAST* GetArgs(int i)const{
         if(i<args.size())
             return args[i];
         else
