@@ -79,7 +79,78 @@ class BinaryExprAST:public BaseAST{
     BaseAST* GetLHS()const{return lhs;}
     //右辺値をしゅとくする
     BaseAST* GetRHS()const{return rhs;}
-
 };
 
+//関数呼び出しを表すAST
+class CallExprAST:public BaseAST{
+    std::string callee;
+    std::vector<BaseAST*> args;
+    public:
+    CallExprAST(const std::string& _callee,std::vector<BaseAST*>& _args)
+        :BaseAST(AstID::CallExprID),callee(_callee),args(_args){}
+    ~CallExprAST();
+
+    static bool classof(CallExprAST const*){return true;}
+    static bool classof(BaseAST const* base){
+        return base->GetValueID()==AstID::CallExprID;
+    }
+
+    //呼び出す関数名を取得する
+    std::string GetCallee()const{return callee;}
+
+    //i番目の引数を取得する
+    BaseAST* GetArgs(int i){
+        if(i<args.size())
+            return args[i];
+        else
+            return nullptr;
+    }
+};
+
+//ジャンプ（ここではreturn)を表すAST
+class JumpStmtAST:public BaseAST{
+    BaseAST* expr;
+    public:
+    JumpStmtAST(BaseAST* _expr):BaseAST(AstID::JumpStmtID),expr(_expr){}
+    ~JumpStmtAST(){Safe_Delete(expr);}
+
+    static bool classof(JumpStmtAST const*){return true;}
+    static bool classof(BaseAST const* base){
+        return base->GetValueID()==AstID::JumpStmtID;
+    }
+
+    //returnで返すExpressionを取得する
+    BaseAST* GetExpr()const{return expr;}
+};
+
+//変数参照を表すAST
+class VariableAST:public BaseAST{
+    std::string name;
+    public:
+    VariableAST(const std::string &_name):BaseAST(AstID::VariableID),name(_name){}
+    ~VariableAST(){}
+
+    static bool classof(VariableAST const*){return true;}
+    static bool classof(BaseAST const* base){
+        return base->GetValueID()==AstID::VariableID;
+    }
+
+    //変数名を取得する
+    std::string GetName()const{return name;}
+};
+
+//整数を表すAST
+class NumberAST:public BaseAST{
+    int val;
+    public:
+    NumberAST(int _val):BaseAST(AstID::NumberID),val(_val){}
+    ~NumberAST(){}
+    static bool classof(NumberAST const*){return true;}
+    static bool classof(BaseAST const* base){
+        return base->GetValueID()==AstID::NumberID;
+    }
+
+    //このASTが表現する数値を取得する
+    int GetNumberValue()const{return val;}   
+};
 }
