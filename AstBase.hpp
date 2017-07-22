@@ -56,4 +56,30 @@ class VariableDeclAST:public BaseAST{
 
 };
 
+//二項演算を表すAST
+class BinaryExprAST:public BaseAST{
+    std::string op;
+    BaseAST *lhs,*rhs;
+    public:
+    BinaryExprAST(std::string _op,BaseAST * _lhs,BaseAST * _rhs)
+        :BaseAST(AstID::BinaryExprID),op(_op),lhs(_lhs),rhs(_rhs){}
+    ~BinaryExprAST(){
+        Safe_Delete(lhs),Safe_Delete(rhs);
+    }
+
+    static bool classof(BinaryExprAST const*){return true;}
+    static bool classof(BaseAST const* base){
+        return base->GetValueID()==AstID::BinaryExprID;
+    }
+
+    //演算子を取得する
+    std::string GetOp()const{return op;}
+
+    //左辺値をしゅとくする
+    BaseAST* GetLHS()const{return lhs;}
+    //右辺値をしゅとくする
+    BaseAST* GetRHS()const{return rhs;}
+
+};
+
 }
