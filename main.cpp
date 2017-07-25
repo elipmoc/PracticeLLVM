@@ -5,6 +5,7 @@
 #include "Lexer.hpp"
 #include "AstBase.hpp"
 #include "FunctionAST.hpp"
+#include "Parser.hpp"
 using practicellvm::Token;
 using practicellvm::TokenType;
 using practicellvm::TokenStream;

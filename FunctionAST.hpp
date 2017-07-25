@@ -79,12 +79,12 @@ namespace practicellvm{
 
 
     //ソースコードを表すAST
-    class TranslationAST{
+    class TranslationUnitAST{
         std::vector<PrototypeAST*> prototypes;
         std::vector<FunctionAST*> functions;
         public:
-        TranslationAST(){}
-        ~TranslationAST();
+        TranslationUnitAST(){}
+        ~TranslationUnitAST();
 
         //モジュールにプロトタイプ宣言を追加する
         bool AddPrototype(PrototypeAST* proto);
