@@ -1,10 +1,4 @@
 #include <iostream>
-#include "APP.hpp"
-#include "Token.hpp"
-#include "TokenStream.hpp"
-#include "Lexer.hpp"
-#include "AstBase.hpp"
-#include "FunctionAST.hpp"
 #include "Parser.hpp"
 using practicellvm::Token;
 using practicellvm::TokenType;

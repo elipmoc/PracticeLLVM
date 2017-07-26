@@ -4,6 +4,6 @@
     "version": "0.1.0",
     "command": "g++",
     "isShellCommand": true,
-    "args": ["-g","main.cpp","TokenStream.cpp","Lexer.cpp"],
+    "args": ["-g","main.cpp","TokenStream.cpp","Lexer.cpp","Parser.cpp"],
     "showOutput": "always"
 }

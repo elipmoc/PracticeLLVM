@@ -1,6 +1,12 @@
 #pragma once
-namespace practicellvm{
+#include "APP.hpp"
+#include "Token.hpp"
+#include "TokenStream.hpp"
+#include "Lexer.hpp"
+#include "AstBase.hpp"
+#include "FunctionAST.hpp"
 
+namespace practicellvm{
     //構文解析・意味解析クラス
     class Parser{
         TokenStream* tokens;
