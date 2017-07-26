@@ -26,4 +26,41 @@ namespace practicellvm{
         }
         else return *(new TranslationUnitAST());
     }
+
+    //TranslationUnit用構文解析メソッド
+    //<return>解析成功 :true 解析失敗:false
+    bool Parser::VisitTranslationUnit(){
+        tu=new TranslationUnitAST();
+
+        //ExternalDecl
+        while(true){
+            if(VisitExternalDeclaration(tu)==false){
+                Safe_Delete(tu);
+                return false;
+            }
+            if(tokens->GetCurType()==TokenType::TOK_EOF)
+                break;
+        }
+        return true;
+    }
+
+    //ExternalDeclaration用構文解析クラス
+    //解析したPrototypeASTとFunctionASTをTranslationUnitに追加
+    bool Parser::VisitExternalDeclaration(TranslationUnitAST* tunit){
+        //FunctionDeclaration
+        PrototypeAST* proto =VisitFunctionDeclaration();
+        if(proto){
+            tunit->AddPrototype(proto);
+            return true;
+        }
+
+        //FunctionDefinition
+        FunctionAST* funcDef=VisitFunctionDefinition();
+        if(funcDef){
+            tunit->AddFunction(funcDef);
+            return true;
+        }
+        return false;
+    }
+
 }
