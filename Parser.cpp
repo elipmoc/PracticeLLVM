@@ -62,5 +62,25 @@ namespace practicellvm{
         }
         return false;
     }
+    
+    //FunctionDeclaration用構文解析メソッド
+    //<return>解析成功;PrototypeAST　解析失敗:nullptr
+    PrototypeAST* Parser::VisitFunctionDeclaration(){
+        int bkup=tokens->GetCurIndex();
+        PrototypeAST* proto=VisitPrototype();
+        if(proto==nullptr)
+            return nullptr;
+        //文の終わりが;で終わってるか確認
+        if(tokens->GetCurString()==";"){
+            //本来であれば、ここで再定義されていないか確認
+            tokens->GetNextToken();
+            return proto;
+        }
+        else{
+            Safe_Delete(proto);
+            tokens->ApplyTokenIndex(bkup);
+            return nullptr;
+        }
+    }
 
 }
