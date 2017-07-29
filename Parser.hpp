@@ -26,7 +26,7 @@ namespace practicellvm{
         PrototypeAST* VisitFunctionDeclaration();
         FunctionAST* VisitFunctionDefinition();
         PrototypeAST* VisitPrototype();
-        FunctionStmtAST* VisitFunctionStatement();
+        FunctionStmtAST* VisitFunctionStatement(PrototypeAST* proto);
         VariableDeclAST* VisitVariableDeclaration();
         BaseAST* VisitStatement();
         BaseAST* VisitExpressionStatement();

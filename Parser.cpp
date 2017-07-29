@@ -83,4 +83,18 @@ namespace practicellvm{
         }
     }
 
+    //FunctionDefinition用構文解析メソッド
+    //<return> 解析成功:FunctionAST　解析失敗:nullptr
+    FunctionAST* Parser::VisitFunctionDefinition(){
+        PrototypeAST* proto=VisitPrototype();
+        if(proto==nullptr)
+            return nullptr;
+        
+        FunctionStmtAST* func_stmt=VisitFunctionStatement(proto);
+        if(func_stmt==nullptr){
+            Safe_Delete(proto);
+            return nullptr;
+        }
+    }
+
 }
