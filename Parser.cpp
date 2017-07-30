@@ -90,11 +90,45 @@ namespace practicellvm{
         if(proto==nullptr)
             return nullptr;
         
+        //本来であれば、ここで再定義されていないか確認
+
         FunctionStmtAST* func_stmt=VisitFunctionStatement(proto);
-        if(func_stmt==nullptr){
-            Safe_Delete(proto);
-            return nullptr;
-        }
+
+        //あとで追加。。。。。
     }
+
+    //Prototype用構文解析メソッド
+    //<return>解析成功:PrototypeAST　解析失敗:nullptr
+    PrototypeAST* Parser::VisitPrototype(){
+        int bkup=tokens->GetCurIndex();
+        //あとでついか
+        //parameter_list
+        bool is_first_param=true;
+        std::vetor<std::string> param_list;
+        while(true){
+            //区切り文字「,」をスキップ
+            if(!is_first_param && tokens->GetCurType()==TokenType::TOK_SYMBOL && 
+                tokens->GetCurString()==","){
+                    tokens->GetNextToken();
+                }
+            if(tokens->GetCurType()==TokenType::TOK_INT)
+                tokens->GetNextToken();
+            else 
+                break;
+            if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+                //本来であれば、ここで再定義されていないか確認
+
+                param_list.push_back(tokens->GetCurString());
+                tokens->GetNextToken();
+            }
+            else{
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
+            }
+        }
+        //省略
+    }
+
+
 
 }
