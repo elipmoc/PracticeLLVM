@@ -1,5 +1,6 @@
 #include "Parser.hpp"
 #include "Lexer.hpp"
+#include <vector>
 
 namespace practicellvm{
     //コンストラクタ
@@ -104,7 +105,7 @@ namespace practicellvm{
         //あとでついか
         //parameter_list
         bool is_first_param=true;
-        std::vetor<std::string> param_list;
+        std::vector<std::string> param_list;
         while(true){
             //区切り文字「,」をスキップ
             if(!is_first_param && tokens->GetCurType()==TokenType::TOK_SYMBOL && 
