@@ -191,6 +191,36 @@ namespace practicellvm{
         }
     }
 
+    //AssignmentExpression用構文解析メソッド
+    //<return>解析成功:BaseAST　解析失敗:nullptr
+    BaseAST* Parser::VisitAssignmentExpression(){
+        int bkup=tokens->GetCurIndex();
+        BaseAST* lhs;
+        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+            //本来はここで変数の宣言確認
+            lhs=new VariableAST(tokens->GetCurString());
+            tokens->GetNextToken();
+            BaseAST* rhs;
+            if(tokens->GetCurType()==TokenType::TOK_SYMBOL && tokens->GetCurString()=="="){
+                tokens->GetNextToken();
+                if(rhs=VisitAdditiveExpression(nullptr))
+                    return new BinaryExprAST("=",lhs,rhs);
+                else{
+                    Safe_Delete(lhs);
+                    tokens->ApplyTokenIndex(bkup);
+                }
+            }
+            else{
+                Safe_Delete(lhs);
+                tokens->ApplyTokenIndex(bkup);
+            }
+        }
+        BaseAST* add_expr=VisitAdditiveExpression(nullptr);
+        if(add_expr){
+            return add_expr;
+        }
+        return nullptr;
+    }
 
 
 }
