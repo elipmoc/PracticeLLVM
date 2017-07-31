@@ -130,6 +130,67 @@ namespace practicellvm{
         //省略
     }
 
+    //FunctionStatement用構文解析メソッド
+    //<param> 関数名や引数を格納したPrototypeクラスのインスタンス
+    //<return>解析成功:FunctionStmtAST　解析失敗:nullptr
+    FunctionStmtAST* Parser::VisitFunctionStatement(PrototypeAST* proto){
+        int bkup=tokens->GetCurIndex();
+        if(tokens->GetCurString()=="{"){
+            tokens->GetNextToken();
+        }
+        else 
+            return nullptr;
+        FunctionStmtAST* func_stmt=new FunctionStmtAST();
+
+        //引数をfunc_stmtの変数宣言リストに追加
+        for(int i=0;i<proto->GetParamNum();i++){
+            VariableDeclAST* vdecl=new VariableDeclAST(proto->GetParamName(i));
+            vdecl->SetDeclType(VariableDeclAST::DeclType::param);
+            func_stmt->AddVariableDeclaration(vdecl);
+            variableTable.push_back(vdecl->GetName());
+        }
+        //省略
+        //仮においてるｉｆ文
+        if(false){
+
+        }else if(var_decl=VisitVariableDeclaration()){
+            while(var_decl){
+                var_decl->SetDeclType(VariableDeclAST::DeclType::local);
+                //本来ならここで変数が二重宣言されていないことを確認
+
+                func_stmt->AddVariableDeclaration(var_decl);
+                variableTable.push_back(var_decl->GetName());
+                var_decl=VisitVariableDeclaration();
+            }
+
+            if(stmt=VisitStatement()){
+                while(stmt){
+                    last_stmt=stmt;
+                    func_stmt->AddStatement(stmt);
+                    stmt=VisitStatement();
+                }
+            }
+            else{
+                Safe_Delete(func_stmt);
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
+            }
+
+            //本来ならここで戻り値の確認
+
+            if(tokens->GetCurString()=="}"){
+                tokens->GetNextToken();
+                return func_stmt;
+            }
+            else{
+                Safe_Delete(func_stmt);
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
+            }
+
+        }
+    }
+
 
 
 }
