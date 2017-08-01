@@ -222,5 +222,35 @@ namespace practicellvm{
         return nullptr;
     }
 
+    //PrimaryExpression用構文解析メソッド
+    //<return> 解析成功:BaseAST　解析失敗:nullptr
+
+    BaseAST* Parser::VisitPrimaryExpression(){
+
+        
+        int bkup=tokens->GetCurIndex();
+        //変数
+        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+            //本来なここで変数宣言確認
+            std::string var_name=tokens->GetCurString();
+            tokens->GetNextToken();
+            return new VariableAST(var_name);            
+        }
+        //整数リテラル
+        if(tokens->GetCurType()==TokenType::TOK_DIGIT){
+            int val=tokens->GetCurNumVal();
+            tokens->GetNextToken();
+            return new NumberAST(val);
+        }
+        if(tokens->GetCurType()==TokenType::TOK_SYMBOL && 
+            tokens->GetCurString()=="-"){
+                //省略
+
+
+                return nullptr;
+
+        }
+    }
+
 
 }
