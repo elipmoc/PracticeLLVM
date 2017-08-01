@@ -34,6 +34,7 @@ namespace practicellvm{
         BaseAST* VisitAssignmentExpression();
         BaseAST* VisitAdditiveExpression(BaseAST* lhs);
         BaseAST* VisitMultiplicativeExpression(BaseAST* lhs);
+        BaseAST* VisitPostfixExpression();
         BaseAST* VisitPrimaryExpression();
     };
 

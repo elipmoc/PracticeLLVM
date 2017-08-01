@@ -252,5 +252,65 @@ namespace practicellvm{
         }
     }
 
+    //PostfixExpression用構文解析メソッド
+    //<return>解析成功:BaseAST　解析失敗:nullptr
+    BaseAST* Parser::VisitPostfixExpression(){
+        int bkup=tokens->GetCurIndex();
+        //省略　
+        //関数呼び出し
+        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+            //本来ならここで関数の宣言確認
+
+            //関数名取得
+            std::string callee=tokens->GetCurString();
+            tokens->GetNextToken();
+
+            //関数の（の部分
+            if(tokens->GetCurType()!=TokenType::TOK_SYMBOL ||
+                tokens->GetCurString()!="("){
+                    tokens->ApplyTokenIndex(bkup);
+                    return nullptr;
+            }
+
+            //引数の解析
+            tokens->GetNextToken();
+            std::vector<BaseAST*> args;
+            BaseAST * assign_expr=VisitAssignmentExpression();
+            if(assign_expr){
+                args.push_back(assign_expr);
+                //","が続く限り繰り返す
+                while(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+                    tokens->GetCurString()==",")
+                {
+                    tokens->GetNextToken();
+                    assign_expr=VisitAssignmentExpression();
+                    if(assign_expr)
+                        args.push_back(assign_expr);
+                    else
+                        break;
+
+                }
+            }
+
+            //本来ならここで引数の数を確認
+
+            //関数の)の部分
+            if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+                tokens->GetCurString()==")")
+            {
+                tokens->GetNextToken();
+                return new CallExprAST(callee,args);
+            }
+            else{
+                for(auto&& item:args)
+                    Safe_Delete(item);
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
+            }
+        }
+        else {
+            return nullptr;
+        }
+    }
 
 }
