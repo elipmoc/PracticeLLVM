@@ -313,4 +313,66 @@ namespace practicellvm{
         }
     }
 
+    //AdditiveExpression用構文解析メソッド
+    //<param>lhs(左辺) 初回呼び出し時はnullptr
+    //<return>解析成功:BaseAST　解析失敗:nullptr
+    BaseAST * Parser::VisitAdditiveExpression(BaseAST* lhs){
+        int bkup=tokens->GetCurIndex();
+
+        if(!lhs){
+            lhs=VisitMultiplicativeExpression(nullptr);
+            if(!lhs)
+               return nullptr;
+        }
+
+        BaseAST* rhs;
+
+        //+と-の解析
+        if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+             (tokens->GetCurString()=="+" || tokens->GetCurString()=="-")  )
+        {
+            std::string symbol=tokens->GetCurString();
+            tokens->GetNextToken();
+            rhs=VisitMultiplicativeExpression(nullptr);
+            if(rhs){
+                return 
+                    VisitAdditiveExpression(new BinaryExprAST(symbol,lhs,rhs));
+            }
+            Safe_Delete(lhs);
+            tokens->ApplyTokenIndex(bkup);
+            return nullptr;
+        }
+        return lhs;
+    }
+
+    //MultiplicativeExpression用構文解析メソッド
+    //<param>lhs(左辺) 初回呼び出し時はnullptr
+    //<return>解析成功:BaseAST　解析失敗:nullptr
+    BaseAST * Parser::VisitMultiplicativeExpression(BaseAST* lhs){
+        int bkup=tokens->GetCurIndex();
+
+         if(!lhs){
+            lhs=VisitPostfixExpression();
+            if(!lhs)
+               return nullptr;
+        }
+        BaseAST* rhs;
+
+        //*と/の解析
+        if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+             (tokens->GetCurString()=="*" || tokens->GetCurString()=="/")  )
+        {
+            std::string symbol=tokens->GetCurString();
+            tokens->GetNextToken();
+            rhs=VisitPostfixExpression();
+            if(rhs){
+                return 
+                    VisitMultiplicativeExpression(new BinaryExprAST(symbol,lhs,rhs));
+            }
+            Safe_Delete(lhs);
+            tokens->ApplyTokenIndex(bkup);
+            return nullptr;
+        }
+        return lhs;
+    }
 }
