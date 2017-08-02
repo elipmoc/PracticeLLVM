@@ -375,4 +375,23 @@ namespace practicellvm{
         }
         return lhs;
     }
+
+    //ExpressionStatement用構文解析メソッド
+    //<return>解析成功:BaseAST　解析失敗:nullptr
+    BaseAST* Parser::VisitExpressionStatement(){
+        BaseAST* assign_expr;
+
+        //空文
+        if(tokens->GetCurString()==";"){
+            tokens->GetNextToken();
+            return new NullExprAST();
+        }
+        if(assign_expr=VisitAssignmentExpression()){
+            if(tokens->GetCurString()==";"){
+                tokens->GetNextToken();
+                return assign_expr;
+            }
+        }
+        return nullptr;
+    }
 }
