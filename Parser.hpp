@@ -5,12 +5,22 @@
 #include "Lexer.hpp"
 #include "AstBase.hpp"
 #include "FunctionAST.hpp"
+#include <map>
 
 namespace practicellvm{
     //構文解析・意味解析クラス
     class Parser{
         TokenStream* tokens;
         TranslationUnitAST* tu;
+
+        //意味解析用各種識別子表
+
+        //宣言済みの変数名を登録する
+        std::vector<std::string> variableTable;
+        //宣言済み関数の関数名と引数のマップ
+        std::map<std::string,int> prototypeTable;
+        //定義済み関数の関数名と引数のマップ
+        std::map<std::string,int> functionTable;
         public:
         Parser(const std::string& filename);
         ~Parser(){
