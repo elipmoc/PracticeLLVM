@@ -73,7 +73,21 @@ namespace practicellvm{
             return nullptr;
         //文の終わりが;で終わってるか確認
         if(tokens->GetCurString()==";"){
-            //本来であれば、ここで再定義されていないか確認
+            //ここで再定義されていないか確認
+            if(
+                prototypeTable.count(proto->GetName())!=0 ||
+                (
+                    functionTable.count(proto->GetName())!=0 && 
+                    functionTable[proto->GetName()]!=proto->GetParamNum()
+                )
+            ){
+                //errorメッセージを出してNULLを返す
+                fprintf(stderr,"Function:%s is redefined",proto->GetName().c_str());
+                Safe_Delete(proto);
+                return nullptr;
+            }
+            //関数名、引数のペアをプロトタイプ宣言テーブルに追加
+            prototypeTable[proto->GetName()]=proto->GetParamNum();
             tokens->GetNextToken();
             return proto;
         }
