@@ -1,6 +1,7 @@
 #include "Parser.hpp"
 #include "Lexer.hpp"
 #include <vector>
+#include <algorithm>
 
 namespace practicellvm{
     //コンストラクタ
@@ -150,7 +151,15 @@ namespace practicellvm{
             else 
                 break;
             if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
-                //本来であれば、ここで再定義されていないか確認
+
+                //引数の変数名に重複がないか確認
+                if(
+                    std::find(param_list.begin(),param_list.end(),tokens->GetCurString())
+                    != param_list.end()
+                ){
+                    tokens->ApplyTokenIndex(bkup);
+                    return nullptr;
+                }
 
                 param_list.push_back(tokens->GetCurString());
                 tokens->GetNextToken();
