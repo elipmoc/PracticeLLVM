@@ -105,9 +105,28 @@ namespace practicellvm{
         if(proto==nullptr)
             return nullptr;
         
-        //本来であれば、ここで再定義されていないか確認
-
+        //ここでプロトタイプ宣言と違いないか、
+        //すでに関数定義が行われていないか確認
+        if(
+            (
+                prototypeTable.count(proto->GetName())!=0 &&
+                prototypeTable[proto->GetName()]!=proto->GetParamNum() 
+            )   ||
+            functionTable.count(proto->GetName())!=0
+        ){
+            //errorメッセージを出してnullptrを返す
+            fprintf(stderr,"Function: %s is redefined",proto->GetName().c_str());
+            Safe_Delete(proto);
+            return nullptr;
+        }
+        variableTable.clear();
         FunctionStmtAST* func_stmt=VisitFunctionStatement(proto);
+
+        if(func_stmt){
+            //ここで関数名、引数のペアを関数テーブルに追加
+            functionTable[proto->GetName()]=proto->GetParamNum();
+            return new FunctionAST(proto,func_stmt);
+        }
 
         //あとで追加。。。。。
     }
