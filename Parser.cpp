@@ -191,19 +191,36 @@ namespace practicellvm{
             func_stmt->AddVariableDeclaration(vdecl);
             variableTable.push_back(vdecl->GetName());
         }
-        //省略
-        //仮においてるｉｆ文
-        if(false){
+	VariableDeclAST *var_decl;
+	BaseAST *stmt;
+    BaseAST *last_stmt;
+        
+     //{statement_list}
+	if(stmt=VisitStatement()){
+		while(stmt){
+			last_stmt=stmt;
+			func_stmt->AddStatement(stmt);
+			stmt=VisitStatement();
+		}
 
-        }else if(var_decl=VisitVariableDeclaration()){
-            while(var_decl){
-                var_decl->SetDeclType(VariableDeclAST::DeclType::local);
-                //本来ならここで変数が二重宣言されていないことを確認
-
-                func_stmt->AddVariableDeclaration(var_decl);
-                variableTable.push_back(var_decl->GetName());
-                var_decl=VisitVariableDeclaration();
+	//variable_declaration_list
+    }else if(var_decl=VisitVariableDeclaration()){
+        while(var_decl){
+            var_decl->SetDeclType(VariableDeclAST::DeclType::local);
+            //変数に重複がないか確認
+            if(
+                std::find(variableTable.begin(),variableTable.end(),var_decl->GetName())
+                != variableTable.end()
+            ){
+                Safe_Delete(var_decl);
+                Safe_Delete(func_stmt);
+                return nullptr;
             }
+            //変数テーブルに新しく読み取った変数名を追加
+            func_stmt->AddVariableDeclaration(var_decl);
+            variableTable.push_back(var_decl->GetName());
+            var_decl=VisitVariableDeclaration();
+        }
 
             if(stmt=VisitStatement()){
                 while(stmt){
@@ -218,8 +235,13 @@ namespace practicellvm{
                 return nullptr;
             }
 
-            //本来ならここで戻り値の確認
+            //最後のStatementがjump_statementであるか確認
+            if(!last_stmt || !llvm::isa<JumpStmtAST>(last_stmt)){
+                Safe_Delete(func_stmt);
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
 
+            }
             if(tokens->GetCurString()=="}"){
                 tokens->GetNextToken();
                 return func_stmt;

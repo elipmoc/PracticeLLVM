@@ -4,6 +4,9 @@
     "version": "0.1.0",
     "command": "g++",
     "isShellCommand": true,
-    "args": ["-g","main.cpp","TokenStream.cpp","Lexer.cpp","Parser.cpp"],
+    "args": ["-g","-o","test.exe","main.cpp","TokenStream.cpp","Lexer.cpp","Parser.cpp"],
     "showOutput": "always"
 }
+/*
+g++ -g -o test.exe main.cpp TokenStream.cpp Lexer.cpp Parser.cpp `llvm-config --cxxflags --ldflags --libs` -ldl
+*/
