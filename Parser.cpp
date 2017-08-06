@@ -2,6 +2,7 @@
 #include "Lexer.hpp"
 #include <vector>
 #include <algorithm>
+#include "llvm/Support/Casting.h"
 
 namespace practicellvm{
     //コンストラクタ
