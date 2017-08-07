@@ -252,7 +252,6 @@ namespace practicellvm{
                 tokens->ApplyTokenIndex(bkup);
                 return nullptr;
             }
-
         }
     }
 
@@ -261,24 +260,31 @@ namespace practicellvm{
     BaseAST* Parser::VisitAssignmentExpression(){
         int bkup=tokens->GetCurIndex();
         BaseAST* lhs;
-        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
-            //本来はここで変数の宣言確認
-            lhs=new VariableAST(tokens->GetCurString());
-            tokens->GetNextToken();
-            BaseAST* rhs;
-            if(tokens->GetCurType()==TokenType::TOK_SYMBOL && tokens->GetCurString()=="="){
-                tokens->GetNextToken();
-                if(rhs=VisitAdditiveExpression(nullptr))
-                    return new BinaryExprAST("=",lhs,rhs);
-                else{
-                    Safe_Delete(lhs);
-                    tokens->ApplyTokenIndex(bkup);
-                }
-            }
-            else{
-                Safe_Delete(lhs);
-                tokens->ApplyTokenIndex(bkup);
-            }
+	    if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){   
+		    //変数が宣言されているか確認
+		    if(std::find(variableTable.begin(), variableTable.end(), tokens->GetCurString()) !=
+				variableTable.end())
+            {			
+                lhs=new VariableAST(tokens->GetCurString());
+		    	tokens->GetNextToken();
+			    BaseAST *rhs;
+		    	if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+			    	tokens->GetCurString()=="=")
+                {
+				    tokens->GetNextToken();
+				    if(rhs=VisitAdditiveExpression(NULL)){
+				    	return new BinaryExprAST("=", lhs, rhs);
+				    }else{
+					    Safe_Delete(lhs);
+					    tokens->ApplyTokenIndex(bkup);
+				    }
+			    }else{
+			    	Safe_Delete(lhs);
+			    	tokens->ApplyTokenIndex(bkup);
+			    }
+	    	}else{
+			    tokens->ApplyTokenIndex(bkup);
+		    }
         }
         BaseAST* add_expr=VisitAdditiveExpression(nullptr);
         if(add_expr){
