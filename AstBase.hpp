@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 namespace practicellvm{
 
@@ -98,10 +99,14 @@ class CallExprAST:public BaseAST{
     std::string callee;
     std::vector<BaseAST*> args;
     public:
-    CallExprAST(const std::string& _callee,std::vector<BaseAST*>& _args)
-        :BaseAST(AstID::CallExprID),callee(_callee),args(_args){}
-    ~CallExprAST();
-
+    CallExprAST(const std::string& _callee,const std::vector<BaseAST*>& _args)
+        :BaseAST(AstID::CallExprID),
+        callee(_callee),
+        args(_args){}
+    ~CallExprAST(){
+        for(auto&& item:args)
+            Safe_Delete(item);
+    };
     static bool classof(CallExprAST const*){return true;}
     static bool classof(BaseAST const* base){
         return base->GetValueID()==AstID::CallExprID;

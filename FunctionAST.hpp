@@ -32,10 +32,20 @@ namespace practicellvm{
 
         public:
         FunctionStmtAST(){}
-        ~FunctionStmtAST();
+        ~FunctionStmtAST(){
+            for(auto&& item:variableDecls)
+                Safe_Delete(item);
+            for(auto&& item:stmtLists)
+                Safe_Delete(item);
+            variableDecls.clear();
+            stmtLists.clear();
+        }
 
         //関数に変数を追加する
-        bool AddVariableDeclaration(VariableDeclAST* vdecl);
+        bool AddVariableDeclaration(VariableDeclAST* vdecl){
+            variableDecls.push_back(vdecl);
+            return true;
+        }
 
         //関数にステートメントを追加する
         bool AddStatement(BaseAST* stmt){stmtLists.push_back(stmt);}
@@ -64,7 +74,10 @@ namespace practicellvm{
         public:
         FunctionAST(PrototypeAST* _proto,FunctionStmtAST* _body)
             :proto(_proto),body(_body){}
-        ~FunctionAST();
+        ~FunctionAST(){
+            	Safe_Delete(proto);
+                Safe_Delete(body);
+        }
 
         //関数名を取得する
         std::string GetName()const{return proto->GetName();}
@@ -84,13 +97,27 @@ namespace practicellvm{
         std::vector<FunctionAST*> functions;
         public:
         TranslationUnitAST(){}
-        ~TranslationUnitAST();
+        ~TranslationUnitAST(){
+            for(auto&& item:prototypes)
+               Safe_Delete(item);
+            for(auto&& item:functions)
+               Safe_Delete(item);
+            prototypes.clear();
+            functions.clear();
+            
+        }
 
         //モジュールにプロトタイプ宣言を追加する
-        bool AddPrototype(PrototypeAST* proto);
+        bool AddPrototype(PrototypeAST* proto){
+            prototypes.push_back(proto);
+            return true;
+        }
 
         //モジュールに関数を追加する
-        bool AddFunction(FunctionAST* func);
+        bool AddFunction(FunctionAST* func){
+            functions.push_back(func);
+            return true;
+        }
 
         //モジュールが空かどうか判定する
         bool IsEmpty()const;

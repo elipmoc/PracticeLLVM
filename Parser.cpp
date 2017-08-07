@@ -459,4 +459,68 @@ namespace practicellvm{
         }
         return nullptr;
     }
+
+    BaseAST* Parser::VisitStatement(){
+        BaseAST* stmt=nullptr;
+        if(stmt=VisitExpressionStatement())
+            return stmt;
+        else if(stmt=VisitJumpStatement())
+            return stmt;
+        return nullptr;
+    }
+
+  // VariableDeclaration用構文解析メソッド
+  // @return 解析成功：VariableDeclAST　解析失敗：nullptr
+    VariableDeclAST *Parser::VisitVariableDeclaration(){
+	    std::string name;
+
+	    //INT
+    	if(tokens->GetCurType()==TokenType::TOK_INT){
+	    	tokens->GetNextToken();	
+    	}else{
+    		return nullptr;
+    	}
+    
+	    //IDENTIFIER
+    	if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+    		name=tokens->GetCurString();    
+    		tokens->GetNextToken();
+    	}else{
+	    	tokens->UnGetToken(1);
+		    return nullptr;
+    	}
+	
+	    //';'
+    	if(tokens->GetCurString()==";"){
+	    	tokens->GetNextToken();
+    		return new VariableDeclAST(name);
+    	}else{
+	    	tokens->UnGetToken(2);	
+	    	return nullptr;
+	    }
+    }
+
+    /**
+  * JumpStatement用構文解析メソッド
+  * @return 解析成功：AST　解析失敗：NULL
+  */
+    BaseAST *Parser::VisitJumpStatement(){
+	    int bkup=tokens->GetCurIndex();
+	    BaseAST *expr;
+
+	    if(tokens->GetCurType() == TokenType::TOK_RETURN){
+	    	tokens->GetNextToken();	
+	    	if(!(expr=VisitAssignmentExpression()) ){
+	    		tokens->ApplyTokenIndex(bkup);
+	    		return nullptr;
+    		}
+	    	if(tokens->GetCurString()==";"){
+	    		tokens->GetNextToken();
+	    		return new JumpStmtAST(expr);
+            }
+	    	tokens->ApplyTokenIndex(bkup);
+	    	return nullptr;
+	    }
+	    return nullptr;
+    }
 }
