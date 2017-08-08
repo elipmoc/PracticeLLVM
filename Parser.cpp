@@ -155,8 +155,7 @@ namespace practicellvm{
 
                 //引数の変数名に重複がないか確認
                 if(
-                    std::find(param_list.begin(),param_list.end(),tokens->GetCurString())
-                    != param_list.end()
+                    ExistContainer(param_list,tokens->GetCurString())
                 ){
                     tokens->ApplyTokenIndex(bkup);
                     return nullptr;
@@ -210,8 +209,7 @@ namespace practicellvm{
             var_decl->SetDeclType(VariableDeclAST::DeclType::local);
             //変数に重複がないか確認
             if(
-                std::find(variableTable.begin(),variableTable.end(),var_decl->GetName())
-                != variableTable.end()
+                ExistContainer(variableTable,var_decl->GetName())
             ){
                 Safe_Delete(var_decl);
                 Safe_Delete(func_stmt);
@@ -262,8 +260,7 @@ namespace practicellvm{
         BaseAST* lhs;
 	    if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){   
 		    //変数が宣言されているか確認
-		    if(std::find(variableTable.begin(), variableTable.end(), tokens->GetCurString()) !=
-				variableTable.end())
+		    if(ExistContainer(variableTable, tokens->GetCurString()))
             {			
                 lhs=new VariableAST(tokens->GetCurString());
 		    	tokens->GetNextToken();
@@ -295,14 +292,14 @@ namespace practicellvm{
 
     //PrimaryExpression用構文解析メソッド
     //<return> 解析成功:BaseAST　解析失敗:nullptr
-
     BaseAST* Parser::VisitPrimaryExpression(){
 
-        
         int bkup=tokens->GetCurIndex();
         //変数
-        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
-            //本来なここで変数宣言確認
+        if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER &&
+            ExistContainer(variableTable,tokens->GetCurString())
+        )
+        {
             std::string var_name=tokens->GetCurString();
             tokens->GetNextToken();
             return new VariableAST(var_name);            
@@ -315,12 +312,38 @@ namespace practicellvm{
         }
         if(tokens->GetCurType()==TokenType::TOK_SYMBOL && 
             tokens->GetCurString()=="-"){
-                //省略
-
-
-                return nullptr;
-
+		    tokens->GetNextToken();
+		    if(tokens->GetCurType()==TokenType::TOK_DIGIT){
+			    int val=tokens->GetCurNumVal();
+			    tokens->GetNextToken();
+			    return new NumberAST(-val);
+		    }
+			tokens->ApplyTokenIndex(bkup);
+			return nullptr;
         }
+        // '(' expression ')'
+	    if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
+			tokens->GetCurString()=="(")
+        {
+	    	tokens->GetNextToken();
+
+	    	//expression
+	    	BaseAST *assign_expr;
+	    	if(!(assign_expr=VisitAssignmentExpression())){
+		    	tokens->ApplyTokenIndex(bkup);
+		    	return nullptr;
+		    }
+
+	    	//RIGHT PALEN
+	    	if(tokens->GetCurString()==")"){
+	    		tokens->GetNextToken();
+		    	return assign_expr;
+		    }
+		    Safe_Delete(assign_expr);
+		    tokens->ApplyTokenIndex(bkup);
+		    return nullptr;
+        }
+        return nullptr;
     }
 
     //PostfixExpression用構文解析メソッド
