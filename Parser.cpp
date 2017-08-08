@@ -350,10 +350,20 @@ namespace practicellvm{
     //<return>解析成功:BaseAST　解析失敗:nullptr
     BaseAST* Parser::VisitPostfixExpression(){
         int bkup=tokens->GetCurIndex();
-        //省略　
+
+        //primary_expression
+	    BaseAST *prim_expr=VisitPrimaryExpression();
+	    if(prim_expr) return prim_expr;
+
         //関数呼び出し
         if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
-            //本来ならここで関数の宣言確認
+            int param_num;
+            if(prototypeTable.count(tokens->GetCurString())!=0)
+                param_num=prototypeTable[tokens->GetCurString()];
+            else if (functionTable.count(tokens->GetCurString())!=0)
+                param_num=functionTable[tokens->GetCurString()];
+            else 
+                return nullptr;
 
             //関数名取得
             std::string callee=tokens->GetCurString();
@@ -386,7 +396,13 @@ namespace practicellvm{
                 }
             }
 
-            //本来ならここで引数の数を確認
+            //引数の数を確認
+            if(args.size()!=param_num){
+                for(auto&& item:args)
+                    Safe_Delete(item);
+                tokens->ApplyTokenIndex(bkup);
+                return nullptr;
+            }
 
             //関数の)の部分
             if(tokens->GetCurType()==TokenType::TOK_SYMBOL &&
