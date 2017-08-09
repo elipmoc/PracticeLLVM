@@ -1,10 +1,17 @@
-#include "llvm/Module.h"
-#include "llvm/IRBuilder.h"
+#pragma once
+
+#include "Parser.hpp"
+//#include "llvm/Module.h"
+
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
 
 namespace practicellvm{
 //コード生成クラス
     class CodeGen{
         private:
+        //My　LLVMContext
+        llvm::LLVMContext m_context;
         //現在コード生成中のFunction
         llvm::Function *curFunc;
         //生成したModuleを格納

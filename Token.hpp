@@ -35,12 +35,12 @@ public:
   }
   ~Token() = default;
   //トークンの種別を取得
-  const TokenType GetTokenType() const { return type; }
+  TokenType GetTokenType() const { return type; }
   //トークンの文字列を表現
-  const std::string GetTokenString() const { return tokenString; }
+  std::string GetTokenString() const { return tokenString; }
   //トークンの数値を取得（種別が数字である場合に使用）
-  const int GetNumberValue() const { return number; }
+  int GetNumberValue() const { return number; }
   //トークンの出現した行数を取得
-  const int GetLine() const { return line; }
+  int GetLine() const { return line; }
 };
 }

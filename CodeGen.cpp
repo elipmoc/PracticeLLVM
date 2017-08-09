@@ -2,8 +2,8 @@
 
 namespace practicellvm{
     //コンストラクタ
-    CodeGem:CodeGen(){
-        builder=new llvm::IRBuilder<>(llvm::getGlobalContext());
+    CodeGen::CodeGen(){
+        builder=new llvm::IRBuilder<>(m_context);
         mod=nullptr;
     }
 }

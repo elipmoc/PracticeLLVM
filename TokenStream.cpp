@@ -13,19 +13,19 @@ namespace practicellvm{
 
     //トークン取得
     //<return>curIndex番目のToken
-    const Token TokenStream::GetToken()const{
+    Token TokenStream::GetToken()const{
         return *tokens[curIndex];
     }
 
     //インデックスを一つ増やして次のトークンにすすめる
     //<return>成功時:true 失敗時:false
-    const bool TokenStream::GetNextToken(){
+    bool TokenStream::GetNextToken(){
         return 
             (tokens.size()-1<=curIndex)?false:(curIndex++,true);
     }
 
     //インデックスtimes回戻す
-    const bool TokenStream::UnGetToken(const int times){
+    bool TokenStream::UnGetToken(const int times){
         for(size_t i=0;i<times;++i){
             if(curIndex==0)
                 return false;
@@ -34,7 +34,7 @@ namespace practicellvm{
         return true;
     }
 
-    const std::string TokenTypeToString(TokenType tokenType){
+    std::string TokenTypeToString(TokenType tokenType){
         std::string str="";
         switch(tokenType){
             case TokenType::TOK_IDENTIFIER:
@@ -63,7 +63,7 @@ namespace practicellvm{
     }
 
     //格納されたトークン一覧を表示する
-    const bool TokenStream::PrintTokens(){
+    bool TokenStream::PrintTokens(){
         for(auto&& item:tokens){
             std::cout<<TokenTypeToString(item->GetTokenType())<<":";
             if(item->GetTokenType()!=TokenType::TOK_EOF)

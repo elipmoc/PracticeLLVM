@@ -15,34 +15,34 @@ class TokenStream{
     TokenStream():curIndex(0){}
     ~TokenStream();
 
-    const bool UnGetToken(const int times=1);
-    const bool GetNextToken();
-    const bool PushToken(Token* token){
+    bool UnGetToken(const int times=1);
+    bool GetNextToken();
+    bool PushToken(Token* token){
         tokens.push_back(token);
         return true;
     }
-    const Token GetToken()const;
+    Token GetToken()const;
 
     //トークンの種類を取得
-    const TokenType GetCurType()const{
+    TokenType GetCurType()const{
         return tokens[curIndex]->GetTokenType();
     }
     //トークンの文字表現を取得
-    const std::string GetCurString()const{
+    std::string GetCurString()const{
         return tokens[curIndex]->GetTokenString();
     }
     //トークンの数値を取得
-    const int GetCurNumVal()const{
+    int GetCurNumVal()const{
         return tokens[curIndex]->GetNumberValue();
     }
     //現在のインデックスを取得
-    const int GetCurIndex()const{return curIndex;}
+    int GetCurIndex()const{return curIndex;}
     //インデックス指定した値に設定
-    const bool ApplyTokenIndex(const int index){
+    bool ApplyTokenIndex(const int index){
         curIndex=index;
         return true;
     }
 
-    const bool PrintTokens();
+    bool PrintTokens();
 };
 }
