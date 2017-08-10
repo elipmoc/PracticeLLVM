@@ -13,4 +13,9 @@ namespace practicellvm{
     bool CodeGen::DoCodeGen(TranslationUnitAST& tunit,const std::string& name){
         return GenerateTranslationUnit(tunit,name);
     }
+
+    //Module取得
+   llvm::Module &CodeGen::GetModule(){
+        return mod? *mod : *(new llvm::Module("null",m_context));
+    }
 }
