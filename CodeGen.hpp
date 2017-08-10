@@ -21,7 +21,7 @@ namespace practicellvm{
         public:
         CodeGen();
         ~CodeGen();
-        bool DoCodeGen(TranslationUnitAST &tunit, const std::string& name,const std::string& link_file, bool with_jit);
+        bool DoCodeGen(TranslationUnitAST &tunit, const std::string& name);
         llvm::Module &GetModule();
         private:
 		bool GenerateTranslationUnit(TranslationUnitAST &tunit,const std::string& name);
