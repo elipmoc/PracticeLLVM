@@ -103,4 +103,30 @@ namespace practicellvm{
         return func;
     }
 
+    //関数のボディ生成メソッド
+    //変数宣言、ステートメントの順に生成
+    //<param> FunctionStmtAST
+    //<return> 最後に生成したValueのポインタ
+
+    llvm::Value* CodeGen::GenerateFunctionStatement(FunctionStmtAST* func_stmt){
+        VariableDeclAST* vdecl;
+        llvm::Value* v=nullptr;
+        for(int i=0;;i++){
+            if(!func_stmt->GetVariableDecl(i))
+                break;
+            
+            vdecl=func_stmt->GetVariableDecl(i);
+            v=GenerateVariableDeclaration(vdecl);
+        }
+
+        BaseAST* stmt;
+        for(int i=0;;i++){
+            stmt=func_stmt->GetStatement(i);
+            if(!stmt) break;
+            if(!llvm::isa<NullExprAST>(stmt))
+                v=GenerateStatement(stmt);
+        }
+        return v;
+    }
+
 }
