@@ -88,4 +88,19 @@ namespace practicellvm{
         return func;
 
     }
+
+    //関数定義生成メソッド
+    //<param> FunctionAST Module
+    //<return> 生成したFunctionのポインタ
+    llvm::Function* CodeGen::GenerateFunctionDefinition(FunctionAST* func_ast,llvm::Module* mod){
+        llvm::Function* func=GeneratePrototype(func_ast->GetPrototype(),mod);
+        if(!func) return nullptr;
+        curFunc=func;
+        auto block= llvm::BasicBlock::Create(m_context,"entry",func);
+        builder->SetInsertPoint(block);
+        //Functionのボディを生成
+        GenerateFunctionStatement(func_ast->GetBody());
+        return func;
+    }
+
 }
