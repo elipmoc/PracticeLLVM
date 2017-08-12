@@ -5,6 +5,7 @@
 
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/ValueSymbolTable.h"
 
 namespace practicellvm{
 //コード生成クラス

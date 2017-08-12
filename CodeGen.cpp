@@ -129,4 +129,20 @@ namespace practicellvm{
         return v;
     }
 
+    //変数宣言（alloca命令）生成メソッド
+    //<param> VariableDeclAST
+    //<return>生成したValueのポインタ
+    llvm::Value* CodeGen::GenerateVariableDeclaration(VariableDeclAST* vdecl){
+        //create alloca
+        auto alloca=
+            builder->CreateAlloca(llvm::Type::getInt32Ty(m_context),0,vdecl->GetName());
+        
+        //引数の宣言だったときは、引数受け取りのコードを挿入する
+        if(vdecl->GetType()==VariableDeclAST::DeclType::param){
+            llvm::ValueSymbolTable* arg_value_table=curFunc->getValueSymbolTable();
+            builder->CreateStore(arg_value_table->lookup(vdecl->GetName().append("_arg")),alloca);
+        }
+        return alloca;
+    }
+
 }
