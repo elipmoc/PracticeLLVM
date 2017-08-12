@@ -145,4 +145,18 @@ namespace practicellvm{
         return alloca;
     }
 
+    //ステートメント生成メソッド
+    //実際にはASTの種類を確認して各種生成メソッドを呼び出し
+    //<param> JumpStmtAST
+    //<return> 生成したValueのポインタ
+    llvm::Value* CodeGen::GenerateStatement(BaseAST* stmt){
+        if(llvm::isa<BinaryExprAST>(stmt))
+            return GenerateBinaryExpression(llvm::dyn_cast<BinaryExprAST>(stmt));
+        if(llvm::isa<CallExprAST>(stmt))
+            return GenerateCallExpression(llvm::dyn_cast<CallExprAST>(stmt));
+        if(llvm::isa<JumpStmtAST>(stmt))
+            return GenerateJumpStatement(llvm::dyn_cast<JumpStmtAST>(stmt));
+        return nullptr;
+    }
+
 }

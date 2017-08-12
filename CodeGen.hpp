@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Parser.hpp"
-//#include "llvm/Module.h"
 
+#include "llvm/Support/Casting.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/ValueSymbolTable.h"
