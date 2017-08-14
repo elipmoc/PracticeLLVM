@@ -296,9 +296,15 @@ namespace practicellvm{
     * @param VariableAST
     * @return  生成したValueのポインタ
     */
-    llvm::Value*　CodeGen::GenerateVariable(VariableAST *var){
+    llvm::Value* CodeGen::GenerateVariable(VariableAST *var){
     	auto vs_table = curFunc->getValueSymbolTable();
     	return builder->CreateLoad(vs_table->lookup(var->GetName()), "var_tmp");
+    }
+
+    llvm::Value *CodeGen::GenerateNumber(int value){
+	    return llvm::ConstantInt::get(
+			    llvm::Type::getInt32Ty(m_context),
+			    value);
     }
 
 }
