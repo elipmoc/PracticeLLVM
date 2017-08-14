@@ -270,4 +270,25 @@ namespace practicellvm{
 	    									arg_vec,"call_tmp" );
     }
 
+    /**
+     * ジャンプ(今回はreturn命令のみ)生成メソッド
+     * @param  JumpStmtAST
+    * @return 生成したValueのポインタ
+    */
+    llvm::Value* CodeGen::GenerateJumpStatement(JumpStmtAST *jump_stmt){
+    	BaseAST *expr=jump_stmt->GetExpr();
+	    llvm::Value *ret_v;
+	    if(llvm::isa<BinaryExprAST>(expr)){
+	    	ret_v=GenerateBinaryExpression(llvm::dyn_cast<BinaryExprAST>(expr));
+	    }else if(llvm::isa<VariableAST>(expr)){
+	    	VariableAST *var=llvm::dyn_cast<VariableAST>(expr);
+	    	ret_v = GenerateVariable(var);
+	    }else if(llvm::isa<NumberAST>(expr)){
+	    	NumberAST *num=llvm::dyn_cast<NumberAST>(expr);
+	    	ret_v=GenerateNumber(num->GetNumberValue());
+
+	    }
+	    builder->CreateRet(ret_v);
+    }
+
 }
