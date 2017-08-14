@@ -159,4 +159,68 @@ namespace practicellvm{
         return nullptr;
     }
 
+    //二項演算子生成メソッド
+    //<param> JumpStmtAST
+    //<return> 生成したValueのポインタ
+    llvm::Value* CodeGen::GenerateBinaryExpression(BinaryExprAST* bin_expr){
+        BaseAST* lhs=bin_expr->GetLHS();
+        BaseAST* rhs=bin_expr->GetRHS();
+        llvm::Value* lhs_v;
+        llvm::Value* rhs_v;
+
+        //assignment
+        if(bin_expr->GetOp()=="="){
+            //lhsは変数とみなせる
+            VariableAST* lhs_var=llvm::dyn_cast<VariableAST>(lhs);
+            auto vs_table=curFunc->getValueSymbolTable();
+            lhs_v=vs_table->lookup(lhs_var->GetName());
+        //other operand
+	    }else{
+		    //lhs=?
+	    	//Binary?
+		    if(llvm::isa<BinaryExprAST>(lhs))
+		    	lhs_v=GenerateBinaryExpression(llvm::dyn_cast<BinaryExprAST>(lhs));
+    		//Variable?
+            else if(llvm::isa<VariableAST>(lhs))
+		    	lhs_v=GenerateVariable(llvm::dyn_cast<VariableAST>(lhs));
+    		//Number?
+            else if(llvm::isa<NumberAST>(lhs)){
+		    	NumberAST *num=llvm::dyn_cast<NumberAST>(lhs);
+		    	lhs_v=GenerateNumber(num->GetNumberValue());
+		    }
+	    }
+	    //create rhs value
+	    if(llvm::isa<BinaryExprAST>(rhs))
+	    	rhs_v=GenerateBinaryExpression(llvm::dyn_cast<BinaryExprAST>(rhs));
+    	//CallExpr?
+        else if(llvm::isa<CallExprAST>(rhs))
+	    	rhs_v=GenerateCallExpression(llvm::dyn_cast<CallExprAST>(rhs));
+	    //Variable?
+        else if(llvm::isa<VariableAST>(rhs))
+	    	rhs_v=GenerateVariable(llvm::dyn_cast<VariableAST>(rhs));
+    	//Number?
+        else if(llvm::isa<NumberAST>(rhs)){
+	    	NumberAST *num=llvm::dyn_cast<NumberAST>(rhs);
+    		rhs_v=GenerateNumber(num->GetNumberValue());
+    	}
+	    if(bin_expr->GetOp()=="="){
+    		//store
+	    	return builder->CreateStore(rhs_v, lhs_v);
+	    }else if(bin_expr->GetOp()=="+"){
+	    	//add
+	    	return builder->CreateAdd(lhs_v, rhs_v, "add_tmp");
+	    }else if(bin_expr->GetOp()=="-"){
+	    	//sub
+	    	return builder->CreateSub(lhs_v, rhs_v, "sub_tmp");
+    	}else if(bin_expr->GetOp()=="*"){
+	    	//mul
+	    	return builder->CreateMul(lhs_v, rhs_v, "mul_tmp");
+	    }else if(bin_expr->GetOp()=="/"){
+		    //div
+		    return builder->CreateSDiv(lhs_v, rhs_v, "div_tmp");
+        }
+        return nullptr;
+
+    }
+
 }
