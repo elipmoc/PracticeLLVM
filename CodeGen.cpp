@@ -223,4 +223,51 @@ namespace practicellvm{
 
     }
 
+    /**
+  * 関数呼び出し(Call命令)生成メソッド
+  * @param CallExprAST
+  * @return 生成したValueのポインタ　
+  */
+    llvm::Value *CodeGen::GenerateCallExpression(CallExprAST *call_expr){
+    	std::vector<llvm::Value*> arg_vec;
+    	BaseAST *arg;
+    	llvm::Value *arg_v;
+    	auto vs_table = curFunc->getValueSymbolTable();
+    	for(int i=0; ; i++){
+    		if(!(arg=call_expr->GetArgs(i)))
+	    		break;
+
+	    	//isCall
+	    	if(llvm::isa<CallExprAST>(arg))
+			    arg_v=GenerateCallExpression(llvm::dyn_cast<CallExprAST>(arg));
+
+		    //isBinaryExpr
+		    else if(llvm::isa<BinaryExprAST>(arg)){
+		    	BinaryExprAST *bin_expr = llvm::dyn_cast<BinaryExprAST>(arg);
+
+	    		//二項演算命令を生成
+		    	arg_v=GenerateBinaryExpression(llvm::dyn_cast<BinaryExprAST>(arg));
+
+		    	//代入の時はLoad命令を追加
+		    	if(bin_expr->GetOp()=="="){
+		    		VariableAST *var= llvm::dyn_cast<VariableAST>(bin_expr->GetLHS());
+		    		arg_v=builder->CreateLoad(vs_table->lookup(var->GetName()), "arg_val");
+		    	}
+	    	}
+
+	    	//isVar
+    		else if(llvm::isa<VariableAST>(arg))
+	    		arg_v=GenerateVariable(llvm::dyn_cast<VariableAST>(arg));
+		
+	    	//isNumber
+	    	else if(llvm::isa<NumberAST>(arg)){
+	    		NumberAST *num=llvm::dyn_cast<NumberAST>(arg);
+	    		arg_v=GenerateNumber(num->GetNumberValue());
+	    	}
+	    	arg_vec.push_back(arg_v);
+	    }
+	    return builder->CreateCall( m_mod->getFunction(call_expr->GetCallee()),
+	    									arg_vec,"call_tmp" );
+    }
+
 }
