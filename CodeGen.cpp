@@ -289,6 +289,7 @@ namespace practicellvm{
 
 	    }
 	    builder->CreateRet(ret_v);
+        return nullptr;
     }
 
     /**
