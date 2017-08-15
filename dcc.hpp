@@ -21,7 +21,7 @@ namespace practicellvm{
         std::string GetInputFileName(){return inputFileName;} 
         //出力ファイル名取得		
 		std::string GetOutputFileName(){return outputFileName;} 	
-        bool parseOption(){
+        bool ParseOption(){
             if(argc<2){
                 fprintf(stderr,"引数が足りません");
                 return false;
