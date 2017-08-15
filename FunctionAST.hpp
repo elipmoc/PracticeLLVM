@@ -120,7 +120,9 @@ namespace practicellvm{
         }
 
         //モジュールが空かどうか判定する
-        bool IsEmpty()const;
+        bool IsEmpty()const{
+            return (prototypes.size()==0 && functions.size()==0);
+        }
 
         //i番目のプロトタイプ宣言をしゅとくする
         PrototypeAST* GetPrototype(int i)const{

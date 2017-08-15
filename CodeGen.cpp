@@ -7,6 +7,11 @@ namespace practicellvm{
         m_mod=nullptr;
     }
 
+    CodeGen::~CodeGen(){
+        Safe_Delete(builder);
+        Safe_Delete(m_mod);
+    }
+
     //コード生成実行
     //<param> TranslationUnitAST Module名（入力ファイル名）
     //<return> 成功時：true　失敗時:false

@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Parser.hpp"
-
-#include "llvm/Assembly/PrintModulePass.h"
+#include "llvm/IR/IRPrintingPasses.h"
 #include "llvm/Support/Casting.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LegacyPassManager.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/ValueSymbolTable.h"
 #include "llvm/Support/Debug.h"

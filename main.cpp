@@ -6,17 +6,24 @@ using practicellvm::TokenType;
 using practicellvm::TokenStream;
 using practicellvm::LexicalAnalysis;
 using practicellvm::OptionParser;
+using practicellvm::Parser;
+using practicellvm::TranslationUnitAST;
+using practicellvm::CodeGen;
+
+
 int main(int argc,char** argv){
     llvm::InitializeNativeTarget();
     llvm::sys::PrintStackTraceOnErrorSignal(llvm::StringRef());
     llvm::PrettyStackTraceProgram X(argc,argv);
     llvm::EnableDebugBuffering=true;
     OptionParser opt(argc,argv);
-    if(!opt.ParseOption())
+    if(!opt.ParseOption()){
+        fprintf(stderr,"オプションがおかしい");
         exit(1);
+        }
 
     //check
-	if(opt.getInputFileName().length()==0){
+	if(opt.GetInputFileName().length()==0){
 		fprintf(stderr,"入力ファイル名が指定されていません\n");
 		exit(1);
 	}
@@ -25,23 +32,23 @@ int main(int argc,char** argv){
 	Parser *parser=new Parser(opt.GetInputFileName());
 	if(!parser->DoParse()){
 		fprintf(stderr, "err at parser or lexer\n");
-		SAFE_DELETE(parser);
+		Safe_Delete(parser);
 		exit(1);
 	}
 
 	//get AST
 	TranslationUnitAST &tunit=parser->GetAST();
-	if(tunit.empty()){
+	if(tunit.IsEmpty()){
 		fprintf(stderr,"TranslationUnit is empty");
-		SAFE_DELETE(parser);
+		Safe_Delete(parser);
 		exit(1);
 	}
 
 	CodeGen *codegen=new CodeGen();
 	if(!codegen->DoCodeGen(tunit, opt.GetInputFileName())){
 		fprintf(stderr, "err at codegen\n");
-		SAFE_DELETE(parser);
-		SAFE_DELETE(codegen);
+		Safe_Delete(parser);
+		Safe_Delete(codegen);
 		exit(1);
 	}
 
@@ -49,10 +56,23 @@ int main(int argc,char** argv){
 	llvm::Module& mod=codegen->GetModule();
 	if(mod.empty()){
 		fprintf(stderr,"Module is empty");
-		SAFE_DELETE(parser);
-		SAFE_DELETE(codegen);
+		Safe_Delete(parser);
+		Safe_Delete(codegen);
 		exit(1);
     }
+
+    llvm::legacy::PassManager pm;
+
+	//出力
+	std::error_code error;
+	llvm::raw_fd_ostream raw_stream(opt.GetOutputFileName().c_str(), error, llvm::sys::fs::OpenFlags::F_RW);
+	pm.add(llvm::createPrintModulePass(raw_stream));
+	pm.run(mod);
+	raw_stream.close();
+
+	//delete
+	Safe_Delete(parser);
+    Safe_Delete(codegen);
 
   /*  TokenStream* tokenStream;
     tokenStream=LexicalAnalysis("sample.dc");
