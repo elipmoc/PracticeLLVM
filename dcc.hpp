@@ -4,8 +4,8 @@ namespace practicellvm{
 
     //コマンドライン文字列切り出しクラス
     class OptionParser{
-        std::string inputFilename;
-        std::s(tring outputFilename;
+        std::string inputFileName;
+        std::string outputFileName;
         int argc;
         char **argv;
         public:
@@ -18,9 +18,9 @@ namespace practicellvm{
         }
 
         //入力ファイル名取得
-        std::string getInputFileName(){return inputFileName;} 
+        std::string GetInputFileName(){return inputFileName;} 
         //出力ファイル名取得		
-		std::string getOutputFileName(){return outputFileName;} 	
+		std::string GetOutputFileName(){return outputFileName;} 	
         bool parseOption(){
             if(argc<2){
                 fprintf(stderr,"引数が足りません");
@@ -30,9 +30,9 @@ namespace practicellvm{
             for(int i=1;i<argc;i++){
                 if(argv[i][0]=='-'){
                     if(argv[i][1]=='o' && argv[i][2]=='\0')
-                        outputFilename.assign(argv[++i]);
+                        outputFileName.assign(argv[++i]);
                     else if(argv[i][1]=='h' && argv[i][2]=='\0'){
-                        PrintfHelp();
+                        PrintHelp();
                         return false;
                     }
                     else {
@@ -44,8 +44,20 @@ namespace practicellvm{
                     inputFileName.assign(argv[i]);
                 }
             }
-
+            //outputFileNameの自動生成
+            if(outputFileName.empty()){
+                const auto & ifn=inputFileName;
+                const int len=ifn.length();
+                if(len>2 && ifn[len-3]=='.' && ifn[len-2]=='d' && ifn[len-1]=='c'){
+                    outputFileName=std::string(ifn.begin(),ifn.end()-3);
+                    outputFileName+=".ll";
+                }
+                else{
+                    outputFileName=ifn;
+                    outputFileName+=".ll";
+                }
+            }
+            return true;
         }
-        }
-
+    };
 }

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "CodeGen.hpp"
+#include "dcc.hpp"
 using practicellvm::Token;
 using practicellvm::TokenType;
 using practicellvm::TokenStream;
