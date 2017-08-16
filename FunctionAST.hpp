@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 namespace practicellvm{
 
@@ -96,7 +97,9 @@ namespace practicellvm{
         std::vector<PrototypeAST*> prototypes;
         std::vector<FunctionAST*> functions;
         public:
-        TranslationUnitAST(){}
+        TranslationUnitAST(){
+            std::cout<<"Create TranslationUnitAST"<<std::endl;
+        }
         ~TranslationUnitAST(){
             for(auto&& item:prototypes)
                Safe_Delete(item);
@@ -109,12 +112,14 @@ namespace practicellvm{
 
         //モジュールにプロトタイプ宣言を追加する
         bool AddPrototype(PrototypeAST* proto){
+            std::cout<<"AddPrototype"<<proto->GetName()<<std::endl;
             prototypes.push_back(proto);
             return true;
         }
 
         //モジュールに関数を追加する
         bool AddFunction(FunctionAST* func){
+            std::cout<<"AddFunction"<<func->GetName()<<std::endl;
             functions.push_back(func);
             return true;
         }

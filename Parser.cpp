@@ -3,10 +3,12 @@
 #include <vector>
 #include <algorithm>
 #include "llvm/Support/Casting.h"
+#include <iostream>
 
 namespace practicellvm{
     //コンストラクタ
     Parser::Parser(const std::string& filename){
+        std::cout<<"レッツ、パース！"<<std::endl;
         tokens=LexicalAnalysis(filename);
     }
 
@@ -17,8 +19,11 @@ namespace practicellvm{
             fprintf(stderr,"erro at lexer\n");
             return false;
         }
-        else 
+        else{
+            std::cout<<"パース成功！"<<std::endl;
+            tokens->PrintTokens(); 
             return VisitTranslationUnit(); 
+        }
     }
 
     //AST取得
@@ -33,6 +38,7 @@ namespace practicellvm{
     //TranslationUnit用構文解析メソッド
     //<return>解析成功 :true 解析失敗:false
     bool Parser::VisitTranslationUnit(){
+        std::cout<<"ASTを作成します"<<std::endl;
         tu=new TranslationUnitAST();
 
         //ExternalDecl
@@ -136,8 +142,36 @@ namespace practicellvm{
     //Prototype用構文解析メソッド
     //<return>解析成功:PrototypeAST　解析失敗:nullptr
     PrototypeAST* Parser::VisitPrototype(){
+        std::string func_name;
+
         int bkup=tokens->GetCurIndex();
-        //あとでついか
+
+        //type_specifier
+	    if(tokens->GetCurType()==TokenType::TOK_INT){
+	    	tokens->GetNextToken();
+	    }else{
+		    return nullptr;
+	    }
+
+
+	    //IDENTIFIER
+	    if(tokens->GetCurType()==TokenType::TOK_IDENTIFIER){
+	    	func_name=tokens->GetCurString();
+	    	tokens->GetNextToken();
+	    }else{
+	    	tokens->UnGetToken(1);	//unget TOK_INT
+		    return nullptr;
+	    }
+
+	    //'('
+	    if(tokens->GetCurString()=="("){
+	    	tokens->GetNextToken();
+	    }else{
+		    tokens->UnGetToken(2);	//unget TOK_INT IDENTIFIER
+		    return nullptr;
+	    }
+
+
         //parameter_list
         bool is_first_param=true;
         std::vector<std::string> param_list;
@@ -168,8 +202,16 @@ namespace practicellvm{
                 tokens->ApplyTokenIndex(bkup);
                 return nullptr;
             }
+            is_first_param = false;
         }
-        //省略
+        //')'
+	    if(tokens->GetCurString()==")"){
+		    tokens->GetNextToken();
+		    return new PrototypeAST(func_name, param_list);
+	    }else{
+		    tokens->ApplyTokenIndex(bkup);
+		    return nullptr;
+        }
     }
 
     //FunctionStatement用構文解析メソッド

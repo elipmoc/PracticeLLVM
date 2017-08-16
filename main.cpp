@@ -16,6 +16,7 @@ int main(int argc,char** argv){
     llvm::sys::PrintStackTraceOnErrorSignal(llvm::StringRef());
     llvm::PrettyStackTraceProgram X(argc,argv);
     llvm::EnableDebugBuffering=true;
+	std::cout<<"targetセット完了"<<std::endl;
     OptionParser opt(argc,argv);
     if(!opt.ParseOption()){
         fprintf(stderr,"オプションがおかしい");
