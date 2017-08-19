@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Parser.hpp"
+#include "llvm/Transforms/Scalar.h"
 #include "llvm/IR/IRPrintingPasses.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/FileSystem.h"

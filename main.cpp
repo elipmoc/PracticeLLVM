@@ -63,7 +63,8 @@ int main(int argc,char** argv){
     }
 
     llvm::legacy::PassManager pm;
-
+	//mem2regのpassを適応
+	pm.add(llvm::createPromoteMemoryToRegisterPass());
 	//出力
 	std::error_code error;
 	llvm::raw_fd_ostream raw_stream(opt.GetOutputFileName().c_str(), error, llvm::sys::fs::OpenFlags::F_RW);
