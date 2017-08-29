@@ -1,3 +1,5 @@
+int printnum(int i);
+
 int test(int j){
 	int i;
 	i=j*10;
@@ -7,6 +9,6 @@ int test(int j){
 int main(){
 	int i;
 	i=10;
-	test(i);
+	printnum(test(i));
 	return 0;
 }
