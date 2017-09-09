@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace practicellvm{
 
@@ -17,12 +18,21 @@ enum class AstID{
 };
 
 //ASTの基底クラス
-class BaseAST{
+class BaseAST{ 
     AstID ID;
+    protected:
+    virtual void DebugPrint_(size_t nest)const{
+        std::cout<<"unknown"<<std::endl;
+    }
     public:
     BaseAST(AstID id):ID(id){}
     virtual ~BaseAST(){}
     AstID GetValueID()const{return ID;}
+    void DebugPrint(size_t nest)const{
+        for(size_t i=0;i<nest;i++)
+            std::cout<<"    ";
+        DebugPrint_(nest);
+    }
 };
 
 //空文を表すAST
@@ -47,9 +57,12 @@ class VariableDeclAST:public BaseAST{
     private:
     DeclType type;
     std::string name;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"VariableDeclAST"<<"{"<<name<<"}"<<std::endl;  
+    }
     public:
     VariableDeclAST(const std::string& _name):BaseAST(AstID::VariableID),name(_name){
-
     }
 
     static bool classof(VariableDeclAST const*){return true;}
@@ -73,6 +86,12 @@ class VariableDeclAST:public BaseAST{
 class BinaryExprAST:public BaseAST{
     std::string op;
     BaseAST *lhs,*rhs;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"BinaryExprAST"<<"{"<<op<<"}"<<std::endl;
+        lhs->DebugPrint(nest+1);        
+        rhs->DebugPrint(nest+1);
+    }
     public:
     BinaryExprAST(std::string _op,BaseAST * _lhs,BaseAST * _rhs)
         :BaseAST(AstID::BinaryExprID),op(_op),lhs(_lhs),rhs(_rhs){}
@@ -98,6 +117,10 @@ class BinaryExprAST:public BaseAST{
 class CallExprAST:public BaseAST{
     std::string callee;
     std::vector<BaseAST*> args;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"CallExprAST"<<"{"<<callee<<"}"<<std::endl;
+    }
     public:
     CallExprAST(const std::string& _callee,const std::vector<BaseAST*>& _args)
         :BaseAST(AstID::CallExprID),
@@ -127,6 +150,11 @@ class CallExprAST:public BaseAST{
 //ジャンプ（ここではreturn)を表すAST
 class JumpStmtAST:public BaseAST{
     BaseAST* expr;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"JumpStmtAST"<<std::endl;
+        expr->DebugPrint(nest+1);
+    }
     public:
     JumpStmtAST(BaseAST* _expr):BaseAST(AstID::JumpStmtID),expr(_expr){}
     ~JumpStmtAST(){Safe_Delete(expr);}
@@ -143,6 +171,10 @@ class JumpStmtAST:public BaseAST{
 //変数参照を表すAST
 class VariableAST:public BaseAST{
     std::string name;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"VariableAST"<<"{"<<name<<"}"<<std::endl;
+    }
     public:
     VariableAST(const std::string &_name):BaseAST(AstID::VariableID),name(_name){}
     ~VariableAST(){}
@@ -159,6 +191,10 @@ class VariableAST:public BaseAST{
 //整数を表すAST
 class NumberAST:public BaseAST{
     int val;
+    protected:
+    virtual void DebugPrint_(size_t nest)const override{
+        std::cout<<"NumberAST"<<"{"<<val<<"}"<<std::endl;
+    }
     public:
     NumberAST(int _val):BaseAST(AstID::NumberID),val(_val){}
     ~NumberAST(){}

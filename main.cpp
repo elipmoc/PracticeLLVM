@@ -45,6 +45,8 @@ int main(int argc,char** argv){
 		exit(1);
 	}
 
+	tunit.DebugPrint();
+
 	CodeGen *codegen=new CodeGen();
 	if(!codegen->DoCodeGen(tunit, opt.GetInputFileName())){
 		fprintf(stderr, "err at codegen\n");

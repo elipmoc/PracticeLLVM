@@ -23,6 +23,11 @@ namespace practicellvm{
 
         //引数の数を取得する
         int GetParamNum()const{return params.size();}
+        void DebugPrint(size_t nest)const{
+            for(size_t i=0;i<nest;i++)
+                std::cout<<"    ";
+            std::cout<<"PrototypeAST"<<"{"<<name<<"}"<<std::endl;
+        }
     };
 
 
@@ -66,6 +71,17 @@ namespace practicellvm{
             else
                 return nullptr;
         }
+
+          void DebugPrint(size_t nest)const{
+            for(size_t i=0;i<nest;i++)
+                std::cout<<"    ";
+            std::cout<<"FunctionStmtAST"<<std::endl;
+            for(auto item:variableDecls)
+                item->DebugPrint(nest+1);
+            for(auto item:stmtLists)
+                item->DebugPrint(nest+1);
+        }
+
     };
 
     //関数定義（ボディ&宣言）を表すAST
@@ -88,6 +104,15 @@ namespace practicellvm{
 
         //この関数のボデイを取得する
         FunctionStmtAST* GetBody()const{return body;}
+
+        void DebugPrint(size_t nest)const{
+            for(size_t i=0;i<nest;i++)
+                std::cout<<"    ";
+            std::cout<<"FunctionAST"<<std::endl;
+            proto->DebugPrint(nest+1);
+            body->DebugPrint(nest+1);
+        }
+
     };
 
 
@@ -97,6 +122,14 @@ namespace practicellvm{
         std::vector<PrototypeAST*> prototypes;
         std::vector<FunctionAST*> functions;
         public:
+
+        void DebugPrint()const{
+            std::cout<<"TranslationUnitAST"<<std::endl;
+            for(auto item:prototypes)
+                item->DebugPrint(1);
+            for(auto item:functions)
+                item->DebugPrint(1);
+        }
         TranslationUnitAST(){
             std::cout<<"Create TranslationUnitAST"<<std::endl;
         }

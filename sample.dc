@@ -1,4 +1,4 @@
-int printnum(int i);
+int printnum(int ii);
 
 int test(int j){
 	int i;
